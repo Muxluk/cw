@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Відеоаналіз</title>
+    <style>
+        :root {
+            --bg: #f9fafb;
+            --surface: #ffffff;
+            --border: #e5e7eb;
+            --border-hover: #d1d5db;
+            --text-main: #111827;
+            --text-muted: #6b7280;
+            --text-light: #9ca3af;
+            --primary: #111827;
+            --primary-hover: #374151;
+            --accent-bg: #f3f4f6;
+            --accent-text: #374151;
+            --success: #059669;
+            --success-bg: #d1fae5;
+            --error: #dc2626;
+            --error-bg: #fee2e2;
+            --radius-sm: 6px;
+            --radius-md: 10px;
+            --radius-lg: 14px;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            --font-sans: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+            --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: var(--font-sans);
+            background-color: var(--bg);
+            color: var(--text-main);
+            line-height: 1.5;
+            min-height: 100vh;
+            padding: 3rem 1rem;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .wrapper {
+            max-width: 760px;
+            margin: 0 auto;
+        }
+
+        header {
+            margin-bottom: 2.5rem;
+            text-align: center;
+        }
+
+        .header-tag {
+            display: inline-block;
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: var(--text-muted);
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 0.2rem 0.75rem;
+            border-radius: 99px;
+            margin-bottom: 1rem;
+            box-shadow: var(--shadow-sm);
+        }
+
+        h1 {
+            font-size: 1.875rem;
+            font-weight: 700;
+            letter-spacing: -0.025em;
+            color: var(--text-main);
+            margin-bottom: 0.5rem;
+        }
+
+        .subtitle {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+        }
+
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            margin-bottom: 1.25rem;
+            box-shadow: var(--shadow-sm);
+            transition: box-shadow 0.2s ease, border-color 0.2s ease;
+        }
+
+        .card:hover {
+            box-shadow: var(--shadow-md);
+            border-color: var(--border-hover);
+        }
+
+        .card-title {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-main);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .input-row {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        input[type=text], input[type=file] {
+            flex: 1;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 0.625rem 1rem;
+            font-size: 0.875rem;
+            color: var(--text-main);
+            outline: none;
+            transition: all 0.2s;
+            width: 100%;
+        }
+
+        input[type=text]:focus, input[type=file]:focus {
+            border-color: var(--text-light);
+            background: var(--surface);
+            box-shadow: 0 0 0 3px rgba(229, 231, 235, 0.5);
+        }
+
+        input[type=text]::placeholder {
+            color: var(--text-light);
+        }
+
+        input[type=file]::file-selector-button {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            color: var(--text-main);
+            font-size: 0.8125rem;
+            font-weight: 500;
+            padding: 0.25rem 0.75rem;
+            cursor: pointer;
+            margin-right: 1rem;
+            transition: background 0.2s;
+        }
+
+        input[type=file]::file-selector-button:hover {
+            background: var(--accent-bg);
+        }
+
+        button {
+            background: var(--primary);
+            color: #fff;
+            border: 1px solid var(--primary);
+            border-radius: var(--radius-md);
+            padding: 0.625rem 1.25rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            white-space: nowrap;
+        }
+
+        button:hover:not(:disabled) {
+            background: var(--primary-hover);
+            border-color: var(--primary-hover);
+        }
+
+        button:active:not(:disabled) {
+            transform: translateY(1px);
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        button.secondary {
+            background: var(--surface);
+            color: var(--text-main);
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-sm);
+        }
+
+        button.secondary:hover:not(:disabled) {
+            background: var(--accent-bg);
+            border-color: var(--border-hover);
+        }
+
+        .progress-section {
+            margin-top: 1.5rem;
+            display: none;
+            padding-top: 1.25rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .progress-section.visible { display: block; }
+
+        .status-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+            font-size: 0.8125rem;
+            font-weight: 500;
+        }
+
+        .status-text { color: var(--text-main); display: flex; align-items: center; gap: 0.5rem; }
+        .status-pct { color: var(--text-muted); font-family: var(--font-mono); }
+
+        .progress-track {
+            height: 6px;
+            background: var(--bg);
+            border-radius: 99px;
+            overflow: hidden;
+            box-shadow: inset 0 1px 2px rgba(0,0,0,0.05);
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--primary);
+            border-radius: 99px;
+            transition: width 0.4s ease;
+            width: 0%;
+        }
+
+        .progress-fill.done { background: var(--success); }
+        .progress-fill.failed { background: var(--error); }
+
+        .stage-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.4rem;
+            margin-top: 1rem;
+        }
+
+        .stage-chip {
+            font-size: 0.7rem;
+            font-weight: 500;
+            padding: 0.25rem 0.6rem;
+            border-radius: 99px;
+            border: 1px solid var(--border);
+            color: var(--text-light);
+            background: var(--bg);
+            transition: all 0.2s;
+        }
+
+        .stage-chip.active {
+            border-color: var(--primary);
+            color: var(--primary);
+            background: var(--surface);
+        }
+
+        .stage-chip.done {
+            border-color: rgba(5, 150, 105, 0.2);
+            color: var(--success);
+            background: var(--success-bg);
+        }
+
+        .result-section { margin-top: 2rem; }
+
+        .result-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .result-header h2 {
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .export-btns {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .result-window {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            height: 500px;
+            overflow-y: auto;
+            padding: 1.5rem;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .result-window::-webkit-scrollbar { width: 6px; }
+        .result-window::-webkit-scrollbar-track { background: transparent; }
+        .result-window::-webkit-scrollbar-thumb { background: var(--border-hover); border-radius: 99px; }
+
+        .result-empty {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: var(--text-light);
+            font-size: 0.875rem;
+        }
+
+        .block-title {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.75rem;
+            margin-top: 1.5rem;
+        }
+        .block-title:first-child { margin-top: 0; }
+
+        .meta-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .meta-item {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 0.75rem;
+        }
+
+        .meta-key {
+            font-size: 0.6875rem;
+            color: var(--text-muted);
+            margin-bottom: 0.25rem;
+        }
+
+        .meta-val {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-main);
+            font-family: var(--font-mono);
+        }
+
+        .keywords-row, .scene-kws {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.4rem;
+        }
+
+        .kw-tag {
+            font-size: 0.75rem;
+            font-weight: 500;
+            padding: 0.25rem 0.6rem;
+            background: var(--accent-bg);
+            color: var(--accent-text);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+        }
+
+        .scene-card {
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 1.25rem;
+            margin-bottom: 1rem;
+            background: var(--surface);
+            transition: box-shadow 0.2s;
+        }
+
+        .scene-card:hover {
+            box-shadow: var(--shadow-sm);
+        }
+
+        .scene-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.75rem;
+        }
+
+        .scene-title {
+            font-size: 0.9375rem;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        .scene-tc {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 0.2rem 0.5rem;
+        }
+
+        .scene-excerpt {
+            font-size: 0.875rem;
+            color: var(--text-main);
+            line-height: 1.6;
+            margin-bottom: 1rem;
+            background: var(--bg);
+            padding: 1rem;
+            border-radius: var(--radius-sm);
+            border-left: 3px solid var(--border-hover);
+        }
+
+        .scene-kw {
+            font-size: 0.6875rem;
+            color: var(--text-muted);
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            padding: 0.15rem 0.5rem;
+        }
+
+        .error-box {
+            background: var(--error-bg);
+            border: 1px solid rgba(220, 38, 38, 0.2);
+            color: var(--error);
+            padding: 1rem;
+            border-radius: var(--radius-md);
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border: 2px solid var(--border-hover);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        @media (max-width: 640px) {
+            .input-row { flex-direction: column; }
+            .meta-grid { grid-template-columns: 1fr 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="wrapper">
+        <header>
+            <h1>Сегментація та аналіз відео</h1>
+            <p class="subtitle">Автоматичне розпізнавання сцен, транскрипція та виділення контексту</p>
+        </header>
+
+        <div class="card">
+            <div class="card-title">Локальний файл</div>
+            <form id="uploadForm">
+                <div class="input-row">
+                    <input type="file" name="file" accept="video/*" required />
+                    <button type="submit">Аналізувати файл</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="card">
+            <div class="card-title">Google Drive</div>
+            <form id="gdriveForm">
+                <div class="input-row">
+                    <input type="text" name="url" placeholder="https://drive.google.com/file/d/.../view" required />
+                    <button type="submit">Аналізувати посилання</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="card">
+            <div class="card-title">Управління задачею</div>
+            <div class="input-row">
+                <input type="text" id="jobId" placeholder="ID задачі (job_id)" />
+                <button class="secondary" onclick="checkStatus()">Перевірити статус</button>
+                <button onclick="loadResult()">Отримати результат</button>
+            </div>
+
+            <div class="progress-section" id="progressSection">
+                <div class="status-bar">
+                    <span class="status-text" id="statusText"><span class="spinner"></span>Обробка...</span>
+                    <span class="status-pct" id="statusPct">0%</span>
+                </div>
+                <div class="progress-track">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                <div class="stage-list" id="stageList"></div>
+            </div>
+        </div>
+
+        <div class="result-section">
+            <div class="result-header">
+                <h2>Результати аналізу</h2>
+                <div class="export-btns">
+                    <button class="secondary" onclick="exportJSON()" id="btnJson" disabled>Завантажити .json</button>
+                    <button class="secondary" onclick="exportTXT()" id="btnTxt" disabled>Завантажити .txt</button>
+                </div>
+            </div>
+            <div class="result-window" id="resultWindow">
+                <div class="result-empty">
+                    <div>Очікування даних...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<script>
+    const STAGES = [
+        { key: 'downloading',     label: 'Завантаження', pct: 10 },
+        { key: 'probing',         label: 'Аналіз метаданих', pct: 20 },
+        { key: 'normalizing',     label: 'Нормалізація',  pct: 35 },
+        { key: 'processing',      label: 'Обробка',       pct: 55 },
+        { key: 'scene_detection', label: 'Пошук сцен',    pct: 65 },
+        { key: 'transcription',   label: 'Транскрибування', pct: 80 },
+        { key: 'done',            label: 'Завершено',     pct: 100 },
+        { key: 'failed',          label: 'Помилка',       pct: 100 },
+    ];
+
+    let currentData = null;
+    let pollTimer = null;
+
+    function setProgress(status, message) {
+        const section = document.getElementById('progressSection');
+        const fill = document.getElementById('progressFill');
+        const pctEl = document.getElementById('statusPct');
+        const textEl = document.getElementById('statusText');
+        const listEl = document.getElementById('stageList');
+
+        section.classList.add('visible');
+
+        const stage = STAGES.find(s => s.key === status) || { pct: 5 };
+        const pct = stage.pct;
+
+        fill.style.width = pct + '%';
+        fill.className = 'progress-fill' + (status === 'done' ? ' done' : status === 'failed' ? ' failed' : '');
+        pctEl.textContent = pct + '%';
+
+        const spinner = status !== 'done' && status !== 'failed'
+            ? '<span class="spinner"></span>'
+            : (status === 'done' ? '✓ ' : '✕ ');
+        textEl.innerHTML = spinner + (message || status);
+
+        const doneIdx = STAGES.findIndex(s => s.key === status);
+        listEl.innerHTML = STAGES.filter(s => s.key !== 'failed').map((s, i) => {
+            let cls = 'stage-chip';
+            if (status === 'failed' && s.key === stage?.key) cls += ' failed';
+            else if (i < doneIdx) cls += ' done';
+            else if (s.key === status) cls += ' active';
+            return `<span class="${cls}">${s.label}</span>`;
+        }).join('');
+    }
+
+    function fmtDuration(sec) {
+        if (!sec) return '—';
+        const h = Math.floor(sec / 3600);
+        const m = Math.floor((sec % 3600) / 60);
+        const s = Math.floor(sec % 60);
+        return h > 0 ? `${h}г ${m}хв ${s}с` : m > 0 ? `${m}хв ${s}с` : `${s}с`;
+    }
+
+    function fmtBytes(b) {
+        if (!b) return '—';
+        if (b > 1048576) return (b / 1048576).toFixed(1) + ' МБ';
+        return (b / 1024).toFixed(0) + ' КБ';
+    }
+
+    function renderResult(data) {
+        const win = document.getElementById('resultWindow');
+        if (!data || typeof data !== 'object') {
+            win.innerHTML = '<div class="error-box">Не вдалося розпарсити відповідь від сервера.</div>';
+            return;
+        }
+
+        if (data.status === 'failed') {
+            win.innerHTML = `<div class="error-box">Помилка виконання: ${data.message || 'невідома помилка'}</div>`;
+            return;
+        }
+
+        let html = '';
+        const meta = data.meta || {};
+        
+        if (meta.duration || meta.video_codec) {
+            html += '<div class="block-title">Технічні характеристики</div>';
+            html += '<div class="meta-grid">';
+            const fields = [
+                ['Тривалість', fmtDuration(meta.duration)],
+                ['Кодек відео', meta.video_codec || '—'],
+                ['Роздільність', meta.width && meta.height ? `${meta.width}×${meta.height}` : '—'],
+                ['Частота кадрів', meta.fps ? meta.fps.toFixed(1) : '—'],
+                ['Аудіодоріжка', meta.has_audio ? (meta.audio_codec || 'присутня') : 'відсутня'],
+                ['Розмір файлу', fmtBytes(meta.size_bytes)]
+            ];
+            fields.forEach(([k, v]) => {
+                html += `<div class="meta-item"><div class="meta-key">${k}</div><div class="meta-val">${v}</div></div>`;
+            });
+            html += '</div>';
+        }
+
+        const keywords = meta.global_theme_keywords || [];
+        if (keywords.length) {
+            html += '<div class="block-title">Глобальні ключові теми</div>';
+            html += '<div class="keywords-row" style="margin-bottom: 1.5rem;">';
+            keywords.forEach(kw => { html += `<span class="kw-tag">${kw}</span>`; });
+            html += '</div>';
+        }
+
+        const merged = data.merged || [];
+        if (merged.length) {
+            html += `<div class="block-title">Виявлені сцени (${merged.length})</div>`;
+            merged.forEach(scene => {
+                html += `<div class="scene-card">
+                    <div class="scene-head">
+                        <div class="scene-title">${scene.title || 'Сцена ' + scene.scene_index}</div>
+                        <span class="scene-tc">${scene.start_tc} — ${scene.end_tc}</span>
+                    </div>`;
+                if (scene.speech_excerpt) {
+                    html += `<div class="scene-excerpt">${scene.speech_excerpt}</div>`;
+                }
+                if (scene.scene_keywords && scene.scene_keywords.length) {
+                    html += '<div class="scene-kws">';
+                    scene.scene_keywords.forEach(kw => { html += `<span class="scene-kw">${kw}</span>`; });
+                    html += '</div>';
+                }
+                html += '</div>';
+            });
+        }
+
+        if (!html) {
+            html = `<pre style="font-family:var(--font-mono);font-size:0.8125rem;color:var(--text-muted);white-space:pre-wrap;">${JSON.stringify(data, null, 2)}</pre>`;
+        }
+
+        win.innerHTML = html;
+        document.getElementById('btnJson').disabled = false;
+        document.getElementById('btnTxt').disabled = false;
+    }
+
+    function exportJSON() {
+        if (!currentData) return;
+        const blob = new Blob([JSON.stringify(currentData, null, 2)], { type: 'application/json' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = `analysis_${currentData.job_id || Date.now()}.json`;
+        a.click();
+    }
+
+    function exportTXT() {
+        if (!currentData) return;
+        const data = currentData;
+        const meta = data.meta || {};
+        const lines = [];
+        
+        lines.push('=== ЗВІТ АНАЛІЗУ ВІДЕО ===\n');
+        
+        if (meta.duration) lines.push(`Тривалість: ${fmtDuration(meta.duration)}`);
+        if (meta.video_codec) lines.push(`Формат: ${meta.video_codec}, ${meta.width}×${meta.height}, ${meta.fps?.toFixed(1)} FPS`);
+        if (meta.global_theme_keywords?.length) lines.push(`\nКлючові теми відео:\n${meta.global_theme_keywords.join(', ')}`);
+        
+        const merged = data.merged || [];
+        if (merged.length) {
+            lines.push(`\n\n=== РОЗБИВКА ПО СЦЕНАХ (${merged.length}) ===\n`);
+            merged.forEach(scene => {
+                lines.push(`[${scene.start_tc} - ${scene.end_tc}] ${scene.title || 'Сцена ' + scene.scene_index}`);
+                if (scene.speech_excerpt) lines.push(`Текст: ${scene.speech_excerpt}`);
+                if (scene.scene_keywords?.length) lines.push(`Теги: ${scene.scene_keywords.join(', ')}`);
+                lines.push('----------------------------------------\n');
+            });
+        }
+        
+        const blob = new Blob([lines.join('\n')], { type: 'text/plain;charset=utf-8' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = `analysis_${data.job_id || Date.now()}.txt`;
+        a.click();
+    }
+
+    function startPolling(jobId) {
+        if (pollTimer) clearInterval(pollTimer);
+        pollTimer = setInterval(async () => {
+            try {
+                const res = await fetch(`/api/jobs/${jobId}`);
+                const data = await res.json();
+                setProgress(data.status, data.message);
+                if (data.status === 'done' || data.status === 'failed') {
+                    clearInterval(pollTimer);
+                    pollTimer = null;
+                    if (data.status === 'done') loadResult();
+                    else renderResult(data);
+                }
+            } catch {}
+        }, 1500);
+    }
+
+    async function postJSON(url, body) {
+        const res = await fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(body),
+        });
+        return res.json();
+    }
+
+    document.getElementById('uploadForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const form = new FormData(e.target);
+        const res = await fetch('/api/analyze/upload', { method: 'POST', body: form });
+        const data = await res.json();
+        if (data.job_id) {
+            document.getElementById('jobId').value = data.job_id;
+            setProgress('downloading', 'Ініціалізація завантаження...');
+            startPolling(data.job_id);
+        }
+    });
+
+    document.getElementById('gdriveForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const url = e.target.url.value;
+        const data = await postJSON('/api/analyze/gdrive', { url });
+        if (data.job_id) {
+            document.getElementById('jobId').value = data.job_id;
+            setProgress('downloading', 'Підключення до Google Drive...');
+            startPolling(data.job_id);
+        }
+    });
+
+    async function checkStatus() {
+        const jobId = document.getElementById('jobId').value.trim();
+        if (!jobId) return;
+        const res = await fetch(`/api/jobs/${jobId}`);
+        const data = await res.json();
+        setProgress(data.status, data.message);
+        if (data.status !== 'done' && data.status !== 'failed') {
+            startPolling(jobId);
+        }
+    }
+
+    async function loadResult() {
+        const jobId = document.getElementById('jobId').value.trim();
+        if (!jobId) return;
+        const res = await fetch(`/api/results/${jobId}`);
+        const data = await res.json();
+        currentData = data;
+        renderResult(data);
+    }
+</script>
+</body>
+</html>
