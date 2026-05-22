@@ -50,16 +50,20 @@ def _detect_with_transnet(video_path: Path, duration: float, min_scene: float) -
         model.eval()
 
         with torch.no_grad():
-            results = model.analyze_video(str(video_path))
-
-        fps = results.get('fps', 25.0)
-        scenes_raw = results.get('scenes', [])
-
-        boundaries = [
-            float(s['start_time'])
-            for s in scenes_raw
-            if float(s['start_time']) > 0
-        ]
+            predictions = model.predict_video(str(video_path))
+            raw_probs = np.array(predictions).flatten()
+            
+        sigma = 1.5
+        smoothed = gaussian_filter1d(raw_probs, sigma=sigma)
+        signal_volatility = float(np.std(np.diff(raw_probs)))
+        base_k = 3.0
+        k = round(max(3.0, min(5.5, base_k + signal_volatility * 25.0)), 2)
+        print(f"[TransNetV2] Аналіз динаміки відео. Волатильність: {signal_volatility:.4f} -> Адаптивний k = {k}")
+        
+        threshold = np.mean(smoothed) + (k * np.std(smoothed))
+        peaks, _ = find_peaks(smoothed, height=threshold)
+        fps = 25.0 
+        boundaries = [float(p / fps) for p in peaks]
 
         return _group_boundaries(boundaries, duration, min_scene)
 
