@@ -1,0 +1,27 @@
+# Python
+__pycache__/
+*.pyc
+venv/
+.venv/
+
+# macOS
+.DS_Store
+__MACOSX/
+
+# IDE
+.idea/
+.vscode/
+
+# Робочі файли застосунку (відео, аудіо, результати, база задач)
+storage/
+*.db
+*.sqlite3
+
+# Секрети та локальні налаштування
+.env
+
+# Завантажені ваги моделей
+models/
+*.pt
+*.pth
+*.ckpt

@@ -1,0 +1,14 @@
+.git
+.gitignore
+__MACOSX
+venv
+.venv
+__pycache__
+*.pyc
+storage
+*.db
+*.sqlite3
+.env
+.idea
+.vscode
+*.md
